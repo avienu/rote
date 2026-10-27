@@ -41,6 +41,14 @@ account and creates the CloudKit container `iCloud.com.avienu.rote`.
 ## Keyboard (Mac)
 
 ⌘N new poem · ⌘R review · ⌘I import · ⇧⌘E export all · ⌘, settings.
-A JSON export can also be opened directly: double-click it in Finder or run
-`open -a Rote export.json`. Poems with the same id are replaced, schedules included.
+Files can also be opened directly, from Finder, the iOS share sheet or `open -a Rote <file>`:
+a JSON export is imported (poems with the same id are replaced, schedules included);
+a `.txt` opens the editor pre-filled. A text file may start with a two-line header,
+title then author, followed by a blank line; see `library/poems/README.md`.
 On a card: space reveal · H hint · R record · 1–4 grade · P peek (learning).
+
+## Library
+
+`library/POEMS.md` is the ranked reading list; `library/poems/` holds public-domain
+texts in the header format, and `tools/txt2rote.py` bundles them into
+`library/rote-import.json` for a one-shot import.

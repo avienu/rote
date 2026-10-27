@@ -12,6 +12,7 @@ struct RootView: View {
     @State private var importing = false
     @State private var exportDocument: DataDocument?
     @State private var notice: String?
+    @State private var openedFile: PoemFile?
     @Environment(\.modelContext) private var context
     private var commands: AppCommands { AppCommands.shared }
 
@@ -36,10 +37,22 @@ struct RootView: View {
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { notice = PoemImport.run(url: url, context: context) }
         }
-        // Archives opened from Finder, the share sheet or `open -a Rote file.json`.
+        // Files opened from Finder, the share sheet or `open -a Rote <file>`:
+        // a JSON archive is imported; a text file opens the editor pre-filled.
         .onOpenURL { url in
             guard url.isFileURL else { return }
-            notice = PoemImport.run(url: url, context: context)
+            if url.pathExtension.lowercased() == "json" {
+                notice = PoemImport.run(url: url, context: context)
+            } else if let file = PoemImport.readText(url: url) {
+                openedFile = file
+            } else {
+                notice = "Could not read \(url.lastPathComponent) as UTF-8 text."
+            }
+        }
+        .sheet(isPresented: Binding(get: { openedFile != nil }, set: { if !$0 { openedFile = nil } })) {
+            if let file = openedFile {
+                PoemEditorView(poem: nil, prefill: file) { created in selection = created }
+            }
         }
         .fileExporter(isPresented: Binding(get: { exportDocument != nil }, set: { if !$0 { exportDocument = nil } }),
                       document: exportDocument, contentType: .json, defaultFilename: "Rote export") { _ in }

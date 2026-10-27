@@ -84,6 +84,14 @@ struct SettingsView: View {
 }
 
 enum PoemImport {
+    /// Reads a text file as a poem with an optional title/author header.
+    static func readText(url: URL) -> PoemFile? {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        guard let contents = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+        return PoemFile.parse(contents)
+    }
+
     /// Imports an export file; poems with a known id are replaced.
     @MainActor
     static func run(url: URL, context: ModelContext) -> String {
