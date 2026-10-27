@@ -36,6 +36,8 @@ struct RoteApp: App {
         #endif
     }
 
+    private var commands: AppCommands { AppCommands.shared }
+
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -43,6 +45,27 @@ struct RoteApp: App {
         .modelContainer(container)
         #if os(macOS)
         .defaultSize(width: 1000, height: 700)
+        #endif
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button("New Poem") { commands.newPoem = true }.keyboardShortcut("n", modifiers: .command)
+            }
+            CommandGroup(after: .newItem) {
+                Divider()
+                Button("Import Poems…") { commands.importRequested = true }.keyboardShortcut("i", modifiers: .command)
+                Button("Export All Poems…") { commands.exportAllRequested = true }.keyboardShortcut("e", modifiers: [.command, .shift])
+            }
+            CommandMenu("Review") {
+                Button("Review Due Cards") { commands.reviewRequested = true }.keyboardShortcut("r", modifiers: .command)
+                Divider()
+                Text("On a card: space reveals, H hints, R records, 1–4 grade.")
+            }
+        }
+        #if os(macOS)
+        Settings {
+            SettingsView()
+                .modelContainer(container)
+        }
         #endif
     }
 }

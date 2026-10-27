@@ -46,7 +46,9 @@ struct TransitionCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(poem.title).font(.caption).foregroundStyle(.tertiary).padding(.bottom, 16)
+                    if !card.showsTitleAsContext {
+                        Text(poem.title).font(.caption).foregroundStyle(.tertiary).padding(.bottom, 16)
+                    }
                     contextBlock
                     targetBlock
                 }

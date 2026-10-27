@@ -7,6 +7,8 @@ struct LibraryView: View {
     @Binding var selection: Poem?
     @Binding var showingNewPoem: Bool
     @Binding var showingReview: Bool
+    @Binding var showingSettings: Bool
+    @Binding var importing: Bool
     @Environment(\.modelContext) private var context
     @Query(sort: \Poem.title) private var poems: [Poem]
 
@@ -43,6 +45,14 @@ struct LibraryView: View {
                 Button { showingNewPoem = true } label: { Label("Add poem", systemImage: "plus") }
                     .keyboardShortcut("n", modifiers: .command)
             }
+            #if os(iOS)
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Button { showingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
+                    Button { importing = true } label: { Label("Import poems…", systemImage: "square.and.arrow.down") }
+                } label: { Label("More", systemImage: "ellipsis.circle") }
+            }
+            #endif
             ToolbarItem {
                 Button { showingReview = true } label: {
                     Label(dueTotal > 0 ? "Review \(dueTotal)" : "Review", systemImage: "rectangle.stack")
@@ -85,7 +95,7 @@ struct PoemRow: View {
                 Text(poem.title).font(.body)
                 HStack(spacing: 6) {
                     if let author = poem.author, !author.isEmpty { Text(author) }
-                    Text("\(poem.askedLines.count) lines")
+                    Text("^[\(poem.askedLines.count) line](inflect: true)")
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)

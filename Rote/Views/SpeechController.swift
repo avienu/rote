@@ -116,6 +116,11 @@ final class SpeechController {
             return FakeSpeechEngine(transcript: fake)
         }
         #endif
+        #if os(macOS)
+        let uid = UserDefaults.standard.string(forKey: "audioInputDeviceUID")
+        return SpeechAnalyzerEngine(inputDeviceUID: (uid?.isEmpty ?? true) ? nil : uid)
+        #else
         return SpeechAnalyzerEngine()
+        #endif
     }
 }

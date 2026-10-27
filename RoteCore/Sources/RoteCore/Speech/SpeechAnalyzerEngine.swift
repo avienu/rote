@@ -3,6 +3,9 @@ import Foundation
 #if canImport(Speech) && canImport(AVFoundation)
 import AVFoundation
 import Speech
+#if os(macOS)
+import AudioToolbox
+#endif
 
 /// On-device transcription with `SpeechAnalyzer` + `SpeechTranscriber` (§9).
 /// Streams microphone audio from `AVAudioEngine`, reports volatile and final
@@ -17,6 +20,8 @@ public actor SpeechAnalyzerEngine: SpeechEngine {
     private var inputContinuation: AsyncStream<AnalyzerInput>.Continuation?
     private var resultsTask: Task<Void, Never>?
     private var vocabulary: [String] = []
+    /// Mac only: CoreAudio device UID to record from; nil = system default.
+    private var inputDeviceUID: String?
 
     private var finalizedText = ""
     private var finalizedTimings: [WordTiming] = []
@@ -24,7 +29,13 @@ public actor SpeechAnalyzerEngine: SpeechEngine {
     private var volatileTimings: [WordTiming] = []
     private var updateContinuation: AsyncStream<SpeechUpdate>.Continuation?
 
-    public init() {}
+    public init(inputDeviceUID: String? = nil) {
+        self.inputDeviceUID = inputDeviceUID
+    }
+
+    public func setInputDevice(uid: String?) {
+        inputDeviceUID = uid
+    }
 
     // MARK: SpeechEngine
 
@@ -161,6 +172,12 @@ public actor SpeechAnalyzerEngine: SpeechEngine {
         #endif
         let engine = AVAudioEngine()
         let input = engine.inputNode
+        #if os(macOS)
+        if let uid = inputDeviceUID, var deviceID = AudioInputDevices.deviceID(forUID: uid), let unit = input.audioUnit {
+            AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0,
+                                 &deviceID, UInt32(MemoryLayout<AudioDeviceID>.size))
+        }
+        #endif
         let inputFormat = input.outputFormat(forBus: 0)
         guard inputFormat.sampleRate > 0 else { throw SpeechEngineError.audioSetupFailed("no input device") }
         let converter = BufferConverter(from: inputFormat, to: format)
