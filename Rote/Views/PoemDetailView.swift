@@ -97,8 +97,11 @@ struct PoemDetailView: View {
     @ViewBuilder private var reviewBox: some View {
         if poem.status == .reviewing {
             let now = Date()
-            let due = poem.dueItems(now: now).count
-            let next = (poem.items ?? []).map(\.due).min()
+            let dueCards = poem.dueItems(now: now).count
+            let dueRuns = RunScheduling.dueRuns(poem: poem, now: now).count
+            let due = dueCards + dueRuns
+            let next = ((poem.items ?? []).map(\.due) + (poem.runItems ?? []).map(\.due)).min()
+            let nextRun = (poem.runItems ?? []).map(\.due).min()
             HStack(spacing: 16) {
                 Button {
                     reviewing = true
@@ -107,9 +110,17 @@ struct PoemDetailView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(due == 0)
-                if due == 0, let next {
-                    Text("Next due \(next.formatted(.relative(presentation: .named)))").font(.caption).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    if dueRuns > 0 {
+                        Text("\(dueCards) lines, \(dueRuns) runs")
+                    } else if due == 0, let next {
+                        Text("Next due \(next.formatted(.relative(presentation: .named)))")
+                    }
+                    if let nextRun, nextRun > now {
+                        Text("Next run \(nextRun.formatted(.relative(presentation: .named)))")
+                    }
                 }
+                .font(.caption).foregroundStyle(.secondary)
             }
         }
     }

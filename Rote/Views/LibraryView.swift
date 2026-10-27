@@ -57,7 +57,7 @@ struct LibraryView: View {
     }
 
     private var dueTotal: Int {
-        poems.filter { $0.status == .reviewing }.reduce(0) { $0 + $1.dueItems(now: now).count }
+        poems.filter { $0.status == .reviewing }.reduce(0) { $0 + $1.dueItems(now: now).count + RunScheduling.dueRuns(poem: $1, now: now).count }
     }
 
     private func sectionTitle(_ status: PoemStatus) -> String {
@@ -91,7 +91,7 @@ struct PoemRow: View {
                 .foregroundStyle(.secondary)
             }
             Spacer()
-            let due = poem.dueItems(now: now).count
+            let due = poem.dueItems(now: now).count + RunScheduling.dueRuns(poem: poem, now: now).count
             if due > 0 {
                 Text("\(due)")
                     .font(.caption.monospacedDigit())

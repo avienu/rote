@@ -17,6 +17,7 @@ struct RecitationView: View {
     let rungs: [Int: LadderRung]
     /// Consolidation runs show the title only until the attempt is in.
     var hideLinesUntilDone = false
+    var allowSelfGrade = true
     @Binding var mode: InputMode
     let onApply: (Result) -> Void
 
@@ -31,11 +32,12 @@ struct RecitationView: View {
     private static let selfGradeAccuracy: [Double] = [1.0, 0.8, 0.5]
 
     init(poem: Poem, lines: [CardLine], rungs: [Int: LadderRung], hideLinesUntilDone: Bool = false,
-         mode: Binding<InputMode>, onApply: @escaping (Result) -> Void) {
+         allowSelfGrade: Bool = true, mode: Binding<InputMode>, onApply: @escaping (Result) -> Void) {
         self.poem = poem
         self.lines = lines
         self.rungs = rungs
         self.hideLinesUntilDone = hideLinesUntilDone
+        self.allowSelfGrade = allowSelfGrade
         self._mode = mode
         self.onApply = onApply
         let asked = lines.filter { !$0.isContext }.map { (order: $0.order, tokens: $0.tokens) }
@@ -66,16 +68,35 @@ struct RecitationView: View {
             controls.padding(16).frame(maxWidth: .infinity)
         }
         .onChange(of: mode) { _, _ in reset() }
-        .onAppear { if mode == .speech { Task { await speech.prepare() } } }
+        .onAppear {
+            if !allowSelfGrade, mode == .selfGrade { mode = .firstLetterTyping }
+            if mode == .speech { Task { await speech.prepare() } }
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["ROTE_AUTO_SPEAK"] != nil {
+                mode = .speech
+                Task { await speech.prepare(); await speech.record() }
+            }
+            #endif
+        }
     }
 
     // MARK: Lines
 
-    private var linesBlock: some View {
+    /// Expected-word offset of each asked line within the attempt.
+    private var firstExpectedByOrder: [Int: Int] {
+        var result: [Int: Int] = [:]
         var offset = 0
+        for line in lines where !line.isContext {
+            result[line.order] = offset
+            offset += line.tokens.filter(\.isWord).count
+        }
+        return result
+    }
+
+    private var linesBlock: some View {
+        let offsets = firstExpectedByOrder
         return ForEach(lines, id: \.order) { line in
-            let firstExpected = offset
-            let _ = { if !line.isContext { offset += line.tokens.filter(\.isWord).count } }()
+            let firstExpected = offsets[line.order] ?? 0
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text("\(line.order + 1)")
                     .font(.caption.monospacedDigit()).foregroundStyle(.tertiary)
@@ -124,7 +145,7 @@ struct RecitationView: View {
                 Picker("Mode", selection: $mode) {
                     Text("Speak").tag(InputMode.speech)
                     Text("Type").tag(InputMode.firstLetterTyping)
-                    Text("Self-grade").tag(InputMode.selfGrade)
+                    if allowSelfGrade { Text("Self-grade").tag(InputMode.selfGrade) }
                 }
                 .pickerStyle(.segmented).labelsHidden().frame(maxWidth: 360)
             }
@@ -188,7 +209,12 @@ struct RecitationView: View {
             }
         }
         .onChange(of: speech.status) { _, status in
-            if status == .finished, let a = speech.attempt { attempt = a }
+            if status == .finished, let a = speech.attempt {
+                attempt = a
+                #if DEBUG
+                if ProcessInfo.processInfo.environment["ROTE_AUTO_APPLY"] != nil { apply() }
+                #endif
+            }
         }
     }
 

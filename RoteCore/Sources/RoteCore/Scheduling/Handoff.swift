@@ -4,7 +4,8 @@ import Foundation
 /// for a poem the user already knows.
 public enum Handoff {
     /// Creates one `TransitionItem` per asked line that lacks one, seeds each
-    /// with `seedGrades[lineOrder]` when given, and marks the poem `.reviewing`.
+    /// with `seedGrades[lineOrder]` when given, creates the run items (§6.4)
+    /// and marks the poem `.reviewing`.
     @discardableResult
     public static func perform<S: Scheduler>(poem: Poem, engine: ReviewEngine<S>, seedGrades: [Int: Grade] = [:],
                                              now: Date = Date()) -> [TransitionItem] {
@@ -23,6 +24,7 @@ public enum Handoff {
         poem.items = items
         poem.status = .reviewing
         poem.updatedAt = now
+        RunScheduling.ensureRunItems(poem: poem, now: now)
         return created
     }
 }
