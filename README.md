@@ -41,4 +41,6 @@ account and creates the CloudKit container `iCloud.com.avienu.rote`.
 ## Keyboard (Mac)
 
 ⌘N new poem · ⌘R review · ⌘I import · ⇧⌘E export all · ⌘, settings.
+A JSON export can also be opened directly: double-click it in Finder or run
+`open -a Rote export.json`. Poems with the same id are replaced, schedules included.
 On a card: space reveal · H hint · R record · 1–4 grade · P peek (learning).

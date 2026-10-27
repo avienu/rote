@@ -36,6 +36,11 @@ struct RootView: View {
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { notice = PoemImport.run(url: url, context: context) }
         }
+        // Archives opened from Finder, the share sheet or `open -a Rote file.json`.
+        .onOpenURL { url in
+            guard url.isFileURL else { return }
+            notice = PoemImport.run(url: url, context: context)
+        }
         .fileExporter(isPresented: Binding(get: { exportDocument != nil }, set: { if !$0 { exportDocument = nil } }),
                       document: exportDocument, contentType: .json, defaultFilename: "Rote export") { _ in }
         .alert(notice ?? "", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
