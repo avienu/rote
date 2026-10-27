@@ -39,6 +39,15 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Rote export
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.json]
+          - CFBundleTypeName: Poem text
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.plain-text]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.avienu.rote

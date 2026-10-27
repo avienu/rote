@@ -6,6 +6,8 @@ import UniformTypeIdentifiers
 /// Add or edit a poem. The text is stored exactly as typed; Rote never fixes it.
 struct PoemEditorView: View {
     let poem: Poem?
+    /// Title, author and text to start a new poem from (an opened or dropped file).
+    var prefill: PoemFile? = nil
     var onSave: ((Poem) -> Void)? = nil
 
     @Environment(\.modelContext) private var context
@@ -74,7 +76,10 @@ struct PoemEditorView: View {
     }
 
     private func load() {
-        guard let poem else { return }
+        guard let poem else {
+            if let prefill { apply(prefill) }
+            return
+        }
         title = poem.title
         author = poem.author ?? ""
         sourceNote = poem.sourceNote ?? ""
@@ -106,8 +111,15 @@ struct PoemEditorView: View {
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
         guard let contents = try? String(contentsOf: url, encoding: .utf8) else { return false }
-        text = contents
+        apply(PoemFile.parse(contents))
         if sourceNote.isEmpty { sourceNote = url.lastPathComponent }
         return true
+    }
+
+    /// Fills empty fields from a file; the user confirms before saving.
+    private func apply(_ file: PoemFile) {
+        text = file.body
+        if title.isEmpty, let t = file.title { title = t }
+        if author.isEmpty, let a = file.author { author = a }
     }
 }
