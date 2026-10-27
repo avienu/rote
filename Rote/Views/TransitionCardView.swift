@@ -15,6 +15,7 @@ struct TransitionCardView: View {
     @State private var typing: FirstLetterSession
     @State private var typedText = ""
     @State private var startedAt = Date()
+    @State private var speech: SpeechController
     @FocusState private var typingFocused: Bool
 
     init(poem: Poem, item: TransitionItem, card: TransitionCard, mode: Binding<InputMode>, onGrade: @escaping (Grade, CardResult) -> Void) {
@@ -25,16 +26,20 @@ struct TransitionCardView: View {
         self.onGrade = onGrade
         _hint = State(initialValue: item.opensWithFirstLetters ? .firstLettersOpening() : HintState())
         _typing = State(initialValue: FirstLetterSession(tokens: card.target.tokens))
+        _speech = State(initialValue: SpeechController(lines: [(card.target.order, card.target.tokens)],
+                                                       locale: poem.locale, vocabulary: poem.vocabulary))
     }
 
     private var capAtGood: Bool { item.opensWithFirstLetters }
     private var maxGrade: Grade { GradeProposal.maxGrade(hint: hint.level, capAtGood: capAtGood) }
     private var typingDone: Bool { mode == .firstLetterTyping && typing.isComplete }
-    private var showsGrades: Bool { revealed || typingDone }
+    private var speechDone: Bool { mode == .speech && speech.attempt != nil }
+    private var showsGrades: Bool { revealed || typingDone || speechDone }
 
     private var proposal: Grade? {
-        guard typingDone else { return nil }
-        return GradeProposal.forCard(accuracy: typing.accuracy, hint: hint.level, capAtGood: capAtGood)
+        if typingDone { return GradeProposal.forCard(accuracy: typing.accuracy, hint: hint.level, capAtGood: capAtGood) }
+        if let attempt = speech.attempt { return GradeProposal.forCard(accuracy: attempt.accuracy, hint: hint.level, capAtGood: capAtGood) }
+        return nil
     }
 
     var body: some View {
@@ -49,10 +54,19 @@ struct TransitionCardView: View {
                 .padding(24)
             }
             Divider()
-            controls.padding(16)
+            controls.padding(16).frame(maxWidth: .infinity)
         }
         .onChange(of: mode) { _, _ in resetForMode() }
-        .onAppear { if mode == .firstLetterTyping { typingFocused = true } }
+        .onAppear {
+            if mode == .firstLetterTyping { typingFocused = true }
+            if mode == .speech { Task { await speech.prepare() } }
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["ROTE_AUTO_SPEAK"] != nil {
+                mode = .speech
+                Task { await speech.prepare(); await speech.record() }
+            }
+            #endif
+        }
     }
 
     // MARK: Text
@@ -81,7 +95,9 @@ struct TransitionCardView: View {
             Text("\(card.target.order + 1)")
                 .font(.caption.monospacedDigit()).foregroundStyle(.tertiary)
                 .frame(width: 28, alignment: .trailing)
-            if showsGrades {
+            if let attempt = speech.attempt, mode == .speech {
+                DiffLineView(line: card.target, attempt: attempt) { speech.toggleCorrection(expectedIndex: $0) }
+            } else if showsGrades {
                 MaskedLineText(line: card.target, reveal: { _ in .full }, errorWords: typing.revealed)
             } else if mode == .firstLetterTyping {
                 MaskedLineText(line: card.target, reveal: typing.reveal(wordIndex:), errorWords: typing.revealed)
@@ -92,6 +108,13 @@ struct TransitionCardView: View {
             }
         }
         .padding(.vertical, 3)
+        if mode == .speech, !speech.transcript.isEmpty {
+            Text(speech.transcript)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .padding(.top, 12)
+                .padding(.leading, 40)
+        }
     }
 
     // MARK: Controls
@@ -100,8 +123,9 @@ struct TransitionCardView: View {
         VStack(spacing: 12) {
             if !showsGrades {
                 Picker("Mode", selection: $mode) {
-                    Text("Self-grade").tag(InputMode.selfGrade)
+                    Text("Speak").tag(InputMode.speech)
                     Text("Type").tag(InputMode.firstLetterTyping)
+                    Text("Self-grade").tag(InputMode.selfGrade)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
@@ -111,6 +135,8 @@ struct TransitionCardView: View {
                 gradeBar
             } else if mode == .firstLetterTyping {
                 typingControls
+            } else if mode == .speech {
+                speechControls
             } else {
                 HStack {
                     Button {
@@ -123,6 +149,37 @@ struct TransitionCardView: View {
                         .buttonStyle(.borderedProminent)
                         .keyboardShortcut(.space, modifiers: [])
                 }
+            }
+        }
+    }
+
+    @ViewBuilder private var speechControls: some View {
+        HStack(spacing: 12) {
+            switch speech.status {
+            case .unavailable(let message):
+                Text(message).font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Button("Type instead") { mode = .firstLetterTyping }
+            case .preparing:
+                ProgressView().controlSize(.small)
+                Text("Preparing speech…").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+            default:
+                Button {
+                    hint.next(wordCount: card.target.tokens.filter(\.isWord).count)
+                } label: { Label(hintLabel, systemImage: "lightbulb") }
+                    .disabled(hint.level == .wholeLine || speech.isRecording)
+                    .keyboardShortcut("h", modifiers: [])
+                Spacer()
+                Button {
+                    speech.toggle()
+                } label: {
+                    Label(speech.isRecording ? "Stop" : "Record", systemImage: speech.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(speech.isRecording ? .red : .accentColor)
+                .disabled(speech.status == .idle)
+                .keyboardShortcut("r", modifiers: [])
             }
         }
     }
@@ -155,22 +212,33 @@ struct TransitionCardView: View {
     }
 
     private var gradeBar: some View {
-        HStack(spacing: 8) {
-            if typingDone {
-                Text(String(format: "%.0f%% · %d errors", typing.accuracy * 100, typing.errors))
-                    .font(.caption).foregroundStyle(.secondary)
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                if typingDone {
+                    Text(String(format: "%.0f%% · %d errors", typing.accuracy * 100, typing.errors))
+                } else if let attempt = speech.attempt {
+                    Text(String(format: "%.0f%% · %d errors · %d extra", attempt.accuracy * 100, attempt.errors, attempt.alignment.insertions))
+                    Button { speech.toggle() } label: { Label("Again", systemImage: "mic") }
+                        .keyboardShortcut("r", modifiers: [])
+                } else if hint.hintsUsed > 0 {
+                    Text("\(hint.hintsUsed) hints · max \(label(for: maxGrade))")
+                }
                 Spacer()
             }
-            ForEach(Grade.allCases, id: \.self) { grade in
-                Button {
-                    finish(grade)
-                } label: {
-                    Text(label(for: grade)).frame(minWidth: 64)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                ForEach(Grade.allCases, id: \.self) { grade in
+                    Button {
+                        finish(grade)
+                    } label: {
+                        Text(label(for: grade)).frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(grade == proposal ? .accentColor : nil)
+                    .disabled(grade.number > maxGrade.number)
+                    .keyboardShortcut(KeyEquivalent(Character(String(grade.number))), modifiers: [])
                 }
-                .buttonStyle(.bordered)
-                .tint(grade == proposal ? .accentColor : nil)
-                .disabled(grade.number > maxGrade.number)
-                .keyboardShortcut(KeyEquivalent(Character(String(grade.number))), modifiers: [])
             }
         }
     }
@@ -186,10 +254,15 @@ struct TransitionCardView: View {
 
     private func finish(_ grade: Grade) {
         let elapsed = Int(Date().timeIntervalSince(startedAt) * 1000)
-        let result = CardResult(mode: mode,
+        var result = CardResult(mode: mode,
                                 wordErrors: typingDone ? typing.errors : nil,
                                 wordCount: typingDone ? typing.wordCount : nil,
                                 elapsedMs: elapsed, hintsUsed: hint.hintsUsed)
+        if let attempt = speech.attempt, mode == .speech {
+            result.wordErrors = attempt.errors
+            result.wordCount = attempt.wordCount
+            result.asrCorrections = attempt.corrections.count
+        }
         onGrade(Grade.min(grade, maxGrade), result)
     }
 
@@ -198,6 +271,7 @@ struct TransitionCardView: View {
         typedText = ""
         typing = FirstLetterSession(tokens: card.target.tokens)
         if mode == .firstLetterTyping { typingFocused = true }
+        if mode == .speech { Task { await speech.prepare() } }
     }
 }
 

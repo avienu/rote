@@ -70,6 +70,18 @@ extension Poem {
             .map { ($0.order, $0.tokens) }
     }
 
+    /// Unique normalized words, for speech biasing.
+    public var vocabulary: [String] {
+        var seen: Set<String> = []
+        var out: [String] = []
+        for line in orderedLines {
+            for token in line.tokens where token.isWord && !token.normalized.isEmpty && seen.insert(token.normalized).inserted {
+                out.append(token.surface.trimmingCharacters(in: .punctuationCharacters))
+            }
+        }
+        return out
+    }
+
     /// Plain-text export with `@` restored on context lines.
     public var exportText: String {
         PoemParser.export(PoemParser.parse(rawText))

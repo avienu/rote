@@ -64,7 +64,7 @@ struct ReviewSessionView: View {
 
     private func build() {
         let now = Date()
-        mode = InputMode(rawValue: defaultModeRaw).flatMap { $0 == .speech ? nil : $0 } ?? .selfGrade
+        mode = InputMode(rawValue: defaultModeRaw) ?? .selfGrade
         var cards: [QueueCard] = []
         var map: [UUID: Entry] = [:]
         for poem in poems where poem.status == .reviewing {
@@ -84,7 +84,7 @@ struct ReviewSessionView: View {
         let engine = ReviewEngine(scheduler: FSRSScheduler(desiredRetention: retention))
         engine.apply(grade: grade, to: entry.item, now: Date(), source: .transitionCard, mode: result.mode,
                      wordErrors: result.wordErrors, wordCount: result.wordCount, elapsedMs: result.elapsedMs,
-                     hintsUsed: result.hintsUsed)
+                     hintsUsed: result.hintsUsed, asrCorrections: result.asrCorrections)
         try? context.save()
         reviewed += 1
         index += 1
@@ -98,4 +98,5 @@ struct CardResult {
     var wordCount: Int?
     var elapsedMs: Int
     var hintsUsed: Int
+    var asrCorrections: Int = 0
 }
