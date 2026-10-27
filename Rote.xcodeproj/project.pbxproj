@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		0D29303D0A8190CFD0CB58CF /* TransitionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CB531037314730CEF087C8 /* TransitionCardView.swift */; };
 		13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */; };
+		151164F93D9BE5E76ECAA6DA /* ExportDocuments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4BD5AF501B727AA039013A /* ExportDocuments.swift */; };
 		1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */; };
 		31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */; };
 		375A1D7173EE18E80A0A6827 /* AcquisitionSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */; };
 		46B916B78946ED880D75ED6E /* PoemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */; };
+		5512E224A6BAB00BC043FFFE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EDB845AE1B69B822296E745 /* SettingsView.swift */; };
 		613065B138676B5BB4D70AF9 /* ReviewSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472DCEA22D7F0D768302E377 /* ReviewSessionView.swift */; };
 		868F06C4092F37351EB8740B /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF78A3986CC8658516C0A72 /* SampleData.swift */; };
 		9321F2C4F21297100AEB913A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4ACA82D323996C8977A029A /* Assets.xcassets */; };
@@ -21,6 +23,7 @@
 		A7A69DC96155E177BEA1D16A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E1EE61476C802AF08F0D4 /* LibraryView.swift */; };
 		AB7FE3FF78FB536ABCA982AD /* DebugSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E13EBEA85818B851D536EB /* DebugSnapshot.swift */; };
 		B46E5E72ADEE8CDC26E255EE /* RoteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066DF9DBB29B0F2BCC92B74E /* RoteApp.swift */; };
+		C53C0ADBAC7BCA145CD745AC /* PoemSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F1C37393F058651680ED49 /* PoemSettingsView.swift */; };
 		D5CD17CC53CA9B5D315D0EBD /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39A99CC4C25C7FEA953096D /* RootView.swift */; };
 		E9E566C895846A77197D1BB3 /* RunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E440EC035B7C06B2FB29D /* RunView.swift */; };
 		F31DE2FDB06A26CF085C2358 /* SpeechController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */; };
@@ -35,13 +38,16 @@
 		35CB531037314730CEF087C8 /* TransitionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionCardView.swift; sourceTree = "<group>"; };
 		472DCEA22D7F0D768302E377 /* ReviewSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSessionView.swift; sourceTree = "<group>"; };
 		48E13EBEA85818B851D536EB /* DebugSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSnapshot.swift; sourceTree = "<group>"; };
+		8EDB845AE1B69B822296E745 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8F4E1EE61476C802AF08F0D4 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffLineView.swift; sourceTree = "<group>"; };
 		B39A99CC4C25C7FEA953096D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoemEditorView.swift; sourceTree = "<group>"; };
+		BC4BD5AF501B727AA039013A /* ExportDocuments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDocuments.swift; sourceTree = "<group>"; };
 		C26E04F6D53328E5E1DCD3F7 /* RoteCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RoteCore; path = RoteCore; sourceTree = SOURCE_ROOT; };
 		D4ACA82D323996C8977A029A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB0E440EC035B7C06B2FB29D /* RunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunView.swift; sourceTree = "<group>"; };
+		E4F1C37393F058651680ED49 /* PoemSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoemSettingsView.swift; sourceTree = "<group>"; };
 		EDF78A3986CC8658516C0A72 /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
 		F2D297CF6F266FB0A8CCDCFF /* RecitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecitationView.swift; sourceTree = "<group>"; };
 		F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechController.swift; sourceTree = "<group>"; };
@@ -73,6 +79,7 @@
 			children = (
 				D4ACA82D323996C8977A029A /* Assets.xcassets */,
 				48E13EBEA85818B851D536EB /* DebugSnapshot.swift */,
+				BC4BD5AF501B727AA039013A /* ExportDocuments.swift */,
 				F71BDA996B1D16ADD18B49B4 /* Info.plist */,
 				066DF9DBB29B0F2BCC92B74E /* RoteApp.swift */,
 				EDF78A3986CC8658516C0A72 /* SampleData.swift */,
@@ -107,10 +114,12 @@
 				8F4E1EE61476C802AF08F0D4 /* LibraryView.swift */,
 				2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */,
 				B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */,
+				E4F1C37393F058651680ED49 /* PoemSettingsView.swift */,
 				F2D297CF6F266FB0A8CCDCFF /* RecitationView.swift */,
 				472DCEA22D7F0D768302E377 /* ReviewSessionView.swift */,
 				B39A99CC4C25C7FEA953096D /* RootView.swift */,
 				DB0E440EC035B7C06B2FB29D /* RunView.swift */,
+				8EDB845AE1B69B822296E745 /* SettingsView.swift */,
 				F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */,
 				35CB531037314730CEF087C8 /* TransitionCardView.swift */,
 			);
@@ -195,16 +204,19 @@
 				375A1D7173EE18E80A0A6827 /* AcquisitionSessionView.swift in Sources */,
 				AB7FE3FF78FB536ABCA982AD /* DebugSnapshot.swift in Sources */,
 				1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */,
+				151164F93D9BE5E76ECAA6DA /* ExportDocuments.swift in Sources */,
 				31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */,
 				A7A69DC96155E177BEA1D16A /* LibraryView.swift in Sources */,
 				13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */,
 				46B916B78946ED880D75ED6E /* PoemEditorView.swift in Sources */,
+				C53C0ADBAC7BCA145CD745AC /* PoemSettingsView.swift in Sources */,
 				A13EBD374437E360C82886A1 /* RecitationView.swift in Sources */,
 				613065B138676B5BB4D70AF9 /* ReviewSessionView.swift in Sources */,
 				D5CD17CC53CA9B5D315D0EBD /* RootView.swift in Sources */,
 				B46E5E72ADEE8CDC26E255EE /* RoteApp.swift in Sources */,
 				E9E566C895846A77197D1BB3 /* RunView.swift in Sources */,
 				868F06C4092F37351EB8740B /* SampleData.swift in Sources */,
+				5512E224A6BAB00BC043FFFE /* SettingsView.swift in Sources */,
 				F31DE2FDB06A26CF085C2358 /* SpeechController.swift in Sources */,
 				0D29303D0A8190CFD0CB58CF /* TransitionCardView.swift in Sources */,
 			);

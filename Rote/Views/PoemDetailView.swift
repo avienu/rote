@@ -10,6 +10,7 @@ struct PoemDetailView: View {
     @State private var reviewing = false
     @State private var learning = false
     @State private var drilling = false
+    @State private var showingSettings = false
     @State private var selectedLine: Int?
     @AppStorage("desiredRetention") private var desiredRetention = FSRSScheduler.defaultRetention
 
@@ -37,6 +38,8 @@ struct PoemDetailView: View {
             }
             ToolbarItem {
                 Menu {
+                    Button("Poem settings…") { showingSettings = true }
+                    Divider()
                     if poem.status == .draft {
                         Button("Review now (skip learning)") { skipToReview() }
                     }
@@ -51,6 +54,7 @@ struct PoemDetailView: View {
         .sheet(isPresented: $editing) { PoemEditorView(poem: poem) }
         .sheet(isPresented: $reviewing) { ReviewSessionView(poems: [poem]) }
         .sheet(isPresented: $learning) { AcquisitionSessionView(poem: poem) }
+        .sheet(isPresented: $showingSettings) { PoemSettingsView(poem: poem) }
         .sheet(isPresented: $drilling) {
             ReviewSessionView(poems: [poem], drillItems: HeatMap.drillLines(lineStats).compactMap { poem.item(forLine: $0) })
         }
@@ -183,7 +187,7 @@ struct PoemDetailView: View {
             }
             HStack(spacing: 12) {
                 Text(poem.status.rawValue.capitalized)
-                Text("\(poem.askedLines.count) lines, \(poem.orderedStanzas.count) stanzas")
+                Text("^[\(poem.askedLines.count) line](inflect: true), ^[\(poem.orderedStanzas.count) stanza](inflect: true)")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
