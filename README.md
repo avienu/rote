@@ -21,8 +21,10 @@ xcodegen generate                            # after adding files to Rote/
 xcodebuild -project Rote.xcodeproj -scheme Rote -destination 'platform=macOS' build
 ```
 
-Set your team in Xcode once; the CloudKit container `iCloud.com.avienu.rote`
-is created on the first signed run.
+The development team (`DEVELOPMENT_TEAM` in `project.yml`) is set to Shawn's
+company team; change it there and run `xcodegen generate` if you build under
+another account. The first signed build registers the Mac in the developer
+account and creates the CloudKit container `iCloud.com.avienu.rote`.
 
 ## Development hooks (Debug builds)
 
