@@ -47,12 +47,12 @@ a `.txt` opens the editor pre-filled. A text file may start with a two-line head
 title then author, followed by a blank line; see `library/poems/README.md`.
 On a card: space reveal · H hint · R record · 1–4 grade · P peek (learning).
 
-## Library
+## Poem files
 
-`library/POEMS.md` is the ranked reading list; `library/poems/` holds public-domain
-texts in the header format, and `tools/txt2rote.py` bundles them into
-`library/rote-import.json` for a one-shot import.
-`library/poems/ORDER.txt` sets the Drafts queue order the archive carries.
+Personal poem texts live outside the repo (Shawn keeps his in `~/Dropbox/prog/rote-poems`:
+`POEMS.md` reading list, `poems/*.txt` in the header format, `poems/ORDER.txt` for the
+Drafts queue order). `tools/txt2rote.py <folder> <out.json>` bundles a folder into one
+archive to open with Rote. `library/` is git-ignored if you want a local copy here.
 
 Drafts are a learning queue: the top one is marked **Up next**, drag rows to reorder
 (Edit on iOS), or right-click a draft and choose **Learn next**. It is a suggestion;

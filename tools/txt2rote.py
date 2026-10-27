@@ -1,6 +1,6 @@
 """Convert Rote-format .txt poems (title / author / blank / body) into one rote.poems JSON archive.
 
-Usage: python3 tools/txt2rote.py library/poems library/rote-import.json
+Usage: python3 tools/txt2rote.py ~/Dropbox/prog/rote-poems/poems ~/Dropbox/prog/rote-poems/rote-import.json
 Poem ids derive from file names, so re-importing replaces the same poems.
 ORDER.txt in the source folder (one file name per line) sets the Drafts queue order.
 """
@@ -26,7 +26,7 @@ for f in sorted(src.glob("*.txt")):
     poems.append({
         "id": str(uuid.uuid5(NS, f.name)).upper(),
         "title": title, "author": author,
-        "sourceNote": f"{f.name}; typed from a standard edition, verify against the link in library/POEMS.md",
+        "sourceNote": f"{f.name}; typed from a standard edition, verify against the link in POEMS.md",
         "rawText": body, "locale": "en-US", "status": "draft",
         "createdAt": now, "updatedAt": now,
         "settings": {"contextLines": 2, "sleepGateEnabled": True, "passThreshold": 0.9, "failThreshold": 0.7},
