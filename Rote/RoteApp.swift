@@ -11,7 +11,9 @@ struct RoteApp: App {
 
     init() {
         do {
-            container = try RoteSchema.makePersistentContainer(cloudKit: Self.cloudKitAvailable)
+            // ROTE_STORE_PATH points development runs at a throwaway store.
+            let storeURL = ProcessInfo.processInfo.environment["ROTE_STORE_PATH"].map { URL(fileURLWithPath: $0) }
+            container = try RoteSchema.makePersistentContainer(cloudKit: Self.cloudKitAvailable, url: storeURL)
             #if DEBUG
             SampleData.seedIfRequested(into: container.mainContext)
             #endif

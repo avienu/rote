@@ -6,6 +6,7 @@ import SwiftUI
 struct LibraryView: View {
     @Binding var selection: Poem?
     @Binding var showingNewPoem: Bool
+    @Binding var showingReview: Bool
     @Environment(\.modelContext) private var context
     @Query(sort: \Poem.title) private var poems: [Poem]
 
@@ -42,7 +43,21 @@ struct LibraryView: View {
                 Button { showingNewPoem = true } label: { Label("Add poem", systemImage: "plus") }
                     .keyboardShortcut("n", modifiers: .command)
             }
+            ToolbarItem {
+                Button { showingReview = true } label: {
+                    Label(dueTotal > 0 ? "Review \(dueTotal)" : "Review", systemImage: "rectangle.stack")
+                }
+                .disabled(dueTotal == 0)
+                .keyboardShortcut("r", modifiers: .command)
+            }
         }
+        .sheet(isPresented: $showingReview) {
+            ReviewSessionView(poems: poems.filter { $0.status == .reviewing })
+        }
+    }
+
+    private var dueTotal: Int {
+        poems.filter { $0.status == .reviewing }.reduce(0) { $0 + $1.dueItems(now: now).count }
     }
 
     private func sectionTitle(_ status: PoemStatus) -> String {

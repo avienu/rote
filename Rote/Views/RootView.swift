@@ -6,11 +6,12 @@ import SwiftUI
 struct RootView: View {
     @State private var selection: Poem?
     @State private var showingNewPoem = false
+    @State private var showingReview = false
     @Environment(\.modelContext) private var context
 
     var body: some View {
         NavigationSplitView {
-            LibraryView(selection: $selection, showingNewPoem: $showingNewPoem)
+            LibraryView(selection: $selection, showingNewPoem: $showingNewPoem, showingReview: $showingReview)
         } detail: {
             if let poem = selection {
                 PoemDetailView(poem: poem)
@@ -22,12 +23,20 @@ struct RootView: View {
         .sheet(isPresented: $showingNewPoem) {
             PoemEditorView(poem: nil) { created in selection = created }
         }
-        #if DEBUG && os(macOS)
+        #if DEBUG
         .task {
-            guard DebugSnapshot.requested else { return }
+            // Screenshot helpers: ROTE_AUTO_REVIEW opens the review session;
+            // ROTE_SNAPSHOT (Mac) writes the key window to a PNG and quits.
+            let env = ProcessInfo.processInfo.environment
             try? await Task.sleep(for: .seconds(1))
-            selection = try? context.fetch(FetchDescriptor<Poem>(sortBy: [SortDescriptor(\.title)])).first
+            if env["ROTE_AUTO_REVIEW"] != nil {
+                showingReview = true
+            } else {
+                selection = try? context.fetch(FetchDescriptor<Poem>(sortBy: [SortDescriptor(\.title)])).first
+            }
+            #if os(macOS)
             await DebugSnapshot.runIfRequested()
+            #endif
         }
         #endif
     }
