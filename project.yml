@@ -1,0 +1,55 @@
+name: Rote
+options:
+  bundleIdPrefix: com.avienu
+  deploymentTarget:
+    iOS: "26.0"
+    macOS: "26.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+packages:
+  RoteCore:
+    path: RoteCore
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+targets:
+  Rote:
+    type: application
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: Rote
+        excludes: ["*.entitlements"]
+    dependencies:
+      - package: RoteCore
+    info:
+      path: Rote/Info.plist
+      properties:
+        CFBundleDisplayName: Rote
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSApplicationCategoryType: public.app-category.education
+        NSMicrophoneUsageDescription: Rote listens while you recite so it can check each line against the poem.
+        NSSpeechRecognitionUsageDescription: Rote transcribes your recitation on-device to compare it with the poem text.
+        NSHumanReadableCopyright: ""
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.avienu.rote
+        PRODUCT_NAME: Rote
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ENABLE_PREVIEWS: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphone*]": Rote/Rote-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Rote/Rote-macOS.entitlements
+        SWIFT_EMIT_LOC_STRINGS: YES
