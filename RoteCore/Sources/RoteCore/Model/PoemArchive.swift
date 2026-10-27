@@ -29,6 +29,7 @@ public struct PoemExport: Codable, Hashable, Sendable {
     public var createdAt: Date
     public var updatedAt: Date
     public var settings: PoemSettings
+    public var queueOrder: Int?
     public var acquisition: AcquisitionState?
     /// Line order → rung raw value.
     public var rungs: [Int: Int]
@@ -96,7 +97,7 @@ public enum PoemArchive {
         PoemExport(
             id: poem.id, title: poem.title, author: poem.author, sourceNote: poem.sourceNote, rawText: poem.rawText,
             locale: poem.locale, status: poem.status, createdAt: poem.createdAt, updatedAt: poem.updatedAt,
-            settings: poem.settings, acquisition: poem.acquisition,
+            settings: poem.settings, queueOrder: poem.queueOrder, acquisition: poem.acquisition,
             rungs: Dictionary(uniqueKeysWithValues: poem.orderedLines.map { ($0.order, $0.ladderRungRaw) }),
             items: (poem.items ?? []).sorted { $0.targetLineOrder < $1.targetLineOrder }.map { item in
                 ItemExport(id: item.id, targetLineOrder: item.targetLineOrder, schedulerState: item.schedulerState, due: item.due,
@@ -145,6 +146,7 @@ public enum PoemArchive {
         poem.updatedAt = e.updatedAt
         poem.settings = e.settings
         poem.acquisition = e.acquisition
+        poem.queueOrder = e.queueOrder
         for line in poem.orderedLines {
             if let raw = e.rungs[line.order] { line.ladderRungRaw = raw }
         }

@@ -20,6 +20,8 @@ public final class Poem {
     public var statusRaw: String = PoemStatus.draft.rawValue
     public var acquisitionData: Data?
     public var settingsData: Data?
+    /// Position in the learning queue of drafts (§3 addition); nil = unplaced, sorts last.
+    public var queueOrder: Int?
 
     @Relationship(deleteRule: .cascade, inverse: \Stanza.poem) public var stanzas: [Stanza]?
     @Relationship(deleteRule: .cascade, inverse: \TransitionItem.poem) public var items: [TransitionItem]?

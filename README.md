@@ -52,3 +52,8 @@ On a card: space reveal · H hint · R record · 1–4 grade · P peek (learning
 `library/POEMS.md` is the ranked reading list; `library/poems/` holds public-domain
 texts in the header format, and `tools/txt2rote.py` bundles them into
 `library/rote-import.json` for a one-shot import.
+`library/poems/ORDER.txt` sets the Drafts queue order the archive carries.
+
+Drafts are a learning queue: the top one is marked **Up next**, drag rows to reorder
+(Edit on iOS), or right-click a draft and choose **Learn next**. It is a suggestion;
+Start learning works on any draft.
