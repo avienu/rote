@@ -14,3 +14,5 @@ jobs:
         run: swift --version
       - name: Run RoteCore tests
         run: swift test --package-path RoteCore
+      - name: Build the Mac app
+        run: xcodebuild -project Rote.xcodeproj -scheme Rote -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build | tail -20
