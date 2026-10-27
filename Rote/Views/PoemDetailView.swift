@@ -8,12 +8,14 @@ struct PoemDetailView: View {
     @Environment(\.modelContext) private var context
     @State private var editing = false
     @State private var reviewing = false
+    @State private var learning = false
     @AppStorage("desiredRetention") private var desiredRetention = FSRSScheduler.defaultRetention
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header
+                learnBox
                 reviewBox
                 PoemTextView(poem: poem)
             }
@@ -41,6 +43,50 @@ struct PoemDetailView: View {
         }
         .sheet(isPresented: $editing) { PoemEditorView(poem: poem) }
         .sheet(isPresented: $reviewing) { ReviewSessionView(poems: [poem]) }
+        .sheet(isPresented: $learning) { AcquisitionSessionView(poem: poem) }
+        #if DEBUG
+        .onAppear {
+            if ProcessInfo.processInfo.environment["ROTE_AUTO_LEARN"] != nil, poem.status == .acquiring { learning = true }
+        }
+        #endif
+    }
+
+    @ViewBuilder private var learnBox: some View {
+        let now = Date()
+        if poem.status == .draft {
+            Button { startLearning() } label: { Label("Start learning", systemImage: "graduationcap") }
+                .buttonStyle(.borderedProminent)
+        } else if poem.status == .acquiring, let acq = poem.acquisition {
+            HStack(spacing: 16) {
+                let gated = AcquisitionMachine.isGated(acq, settings: poem.settings, now: now)
+                Button { learning = true } label: { Label("Continue learning", systemImage: "graduationcap") }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(gated)
+                if gated, let opens = acq.sleepGateOpensAt {
+                    Text("Sleeping. Opens \(opens.formatted(.relative(presentation: .named))).").font(.caption).foregroundStyle(.secondary)
+                } else {
+                    Text(phaseLabel(acq)).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private func phaseLabel(_ acq: AcquisitionState) -> String {
+        switch acq.phase {
+        case .reading: "Reading"
+        case .windowing: "Windows of \(acq.windowSize), pass \(acq.completedPasses + 1)"
+        case .sleepGate: "Sleep gate"
+        case .consolidating: "Consolidating: \(acq.consolidationPasses.count) of \(AcquisitionMachine.consolidationPassesRequired) recitations"
+        case .handedOff: "Handed off"
+        }
+    }
+
+    private func startLearning() {
+        poem.acquisition = AcquisitionMachine.start()
+        poem.status = .acquiring
+        poem.updatedAt = Date()
+        try? context.save()
+        learning = true
     }
 
     private func skipToReview() {

@@ -55,6 +55,30 @@ enum SampleData {
     Dare frame thy fearful symmetry?
     """
 
+    static let upHill = """
+    @The traveller asks; the indented lines answer.
+    Does the road wind up-hill all the way?
+       Yes, to the very end.
+    Will the day's journey take the whole long day?
+       From morn to night, my friend.
+
+    But is there for the night a resting-place?
+       A roof for when the slow dark hours begin.
+    May not the darkness hide it from my face?
+       You cannot miss that inn.
+
+    @Later, the same voices:
+    Shall I meet other wayfarers at night?
+       Those who have gone before.
+    Then must I knock, or call when just in sight?
+       They will not keep you standing at that door.
+
+    Shall I find comfort, travel-sore and weak?
+       Of labour you shall find the sum.
+    Will there be beds for me and all who seek?
+       Yea, beds for all who come.
+    """
+
     @MainActor
     static func seedIfRequested(into context: ModelContext) {
         guard ProcessInfo.processInfo.environment["ROTE_SEED_FIXTURES"] != nil else { return }
@@ -64,6 +88,16 @@ enum SampleData {
         context.insert(sonnet)
         context.insert(Poem.make(title: "The Tyger", author: "William Blake", rawText: tyger))
         Handoff.perform(poem: sonnet, engine: ReviewEngine(scheduler: FSRSScheduler()))
+        let upHill = Poem.make(title: "Up-Hill", author: "Christina Rossetti", rawText: upHill)
+        context.insert(upHill)
+        var acq = AcquisitionMachine.start()
+        AcquisitionMachine.finishReading(&acq)
+        acq.windowSize = 2
+        acq.cursor = 3
+        upHill.acquisition = acq
+        upHill.status = .acquiring
+        let rungs: [Int: LadderRung] = [1: .blank, 2: .blank, 3: .firstLetters, 4: .faded, 5: .full]
+        for (order, rung) in rungs { upHill.line(order: order)?.ladderRung = rung }
         try? context.save()
     }
 }
