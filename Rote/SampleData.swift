@@ -60,8 +60,10 @@ enum SampleData {
         guard ProcessInfo.processInfo.environment["ROTE_SEED_FIXTURES"] != nil else { return }
         let count = (try? context.fetchCount(FetchDescriptor<Poem>())) ?? 0
         guard count == 0 else { return }
-        context.insert(Poem.make(title: "Sonnet 30", author: "William Shakespeare", rawText: sonnet30))
+        let sonnet = Poem.make(title: "Sonnet 30", author: "William Shakespeare", rawText: sonnet30)
+        context.insert(sonnet)
         context.insert(Poem.make(title: "The Tyger", author: "William Blake", rawText: tyger))
+        Handoff.perform(poem: sonnet, engine: ReviewEngine(scheduler: FSRSScheduler()))
         try? context.save()
     }
 }

@@ -13,7 +13,8 @@ enum DebugSnapshot {
     static func runIfRequested() async {
         guard let path = ProcessInfo.processInfo.environment["ROTE_SNAPSHOT"] else { return }
         try? await Task.sleep(for: .seconds(3))
-        guard let window = NSApp.windows.first(where: { $0.isVisible }),
+        let main = NSApp.windows.first(where: { $0.isVisible && $0.sheetParent == nil })
+        guard let window = main?.attachedSheet ?? NSApp.keyWindow ?? main,
               let view = window.contentView?.superview ?? window.contentView,
               let layer = view.layer
         else { exit(2) }

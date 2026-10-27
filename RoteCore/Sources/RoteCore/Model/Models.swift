@@ -256,9 +256,11 @@ public enum RoteSchema {
     /// CloudKit database; callers pass false when the process lacks the iCloud
     /// entitlement (unsigned development builds), since CloudKit setup traps
     /// asynchronously rather than throwing.
-    public static func makePersistentContainer(cloudKit: Bool) throws -> ModelContainer {
+    public static func makePersistentContainer(cloudKit: Bool, url: URL? = nil) throws -> ModelContainer {
         let schema = Schema(models)
-        let config = ModelConfiguration(schema: schema, cloudKitDatabase: cloudKit ? .private(cloudKitContainer) : .none)
+        let cloud: ModelConfiguration.CloudKitDatabase = cloudKit ? .private(cloudKitContainer) : .none
+        let config = url.map { ModelConfiguration(schema: schema, url: $0, cloudKitDatabase: cloud) }
+            ?? ModelConfiguration(schema: schema, cloudKitDatabase: cloud)
         return try ModelContainer(for: schema, configurations: [config])
     }
 }

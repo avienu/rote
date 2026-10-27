@@ -7,11 +7,14 @@ struct PoemDetailView: View {
     @Bindable var poem: Poem
     @Environment(\.modelContext) private var context
     @State private var editing = false
+    @State private var reviewing = false
+    @AppStorage("desiredRetention") private var desiredRetention = FSRSScheduler.defaultRetention
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header
+                reviewBox
                 PoemTextView(poem: poem)
             }
             .padding(24)
@@ -25,6 +28,9 @@ struct PoemDetailView: View {
             }
             ToolbarItem {
                 Menu {
+                    if poem.status == .draft {
+                        Button("Review now (skip learning)") { skipToReview() }
+                    }
                     if poem.status == .retired {
                         Button("Unretire") { poem.status = .draft }
                     } else {
@@ -34,6 +40,32 @@ struct PoemDetailView: View {
             }
         }
         .sheet(isPresented: $editing) { PoemEditorView(poem: poem) }
+        .sheet(isPresented: $reviewing) { ReviewSessionView(poems: [poem]) }
+    }
+
+    private func skipToReview() {
+        Handoff.perform(poem: poem, engine: ReviewEngine(scheduler: FSRSScheduler(desiredRetention: poem.settings.desiredRetention ?? desiredRetention)))
+        try? context.save()
+    }
+
+    @ViewBuilder private var reviewBox: some View {
+        if poem.status == .reviewing {
+            let now = Date()
+            let due = poem.dueItems(now: now).count
+            let next = (poem.items ?? []).map(\.due).min()
+            HStack(spacing: 16) {
+                Button {
+                    reviewing = true
+                } label: {
+                    Label(due > 0 ? "Review \(due) due" : "Nothing due", systemImage: "rectangle.stack")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(due == 0)
+                if due == 0, let next {
+                    Text("Next due \(next.formatted(.relative(presentation: .named)))").font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 
     private var header: some View {
