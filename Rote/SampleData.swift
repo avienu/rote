@@ -91,6 +91,22 @@ enum SampleData {
         if ProcessInfo.processInfo.environment["ROTE_AUTO_RUN"] != nil {
             sonnet.runItems?.forEach { $0.due = Date().addingTimeInterval(-60) }
         }
+        if ProcessInfo.processInfo.environment["ROTE_SEED_HISTORY"] != nil {
+            // Two imperfect run-throughs so the heat map has something to show.
+            let engine = ReviewEngine(scheduler: FSRSScheduler())
+            var spoken = sonnet.askedLines.map { $0.tokens.filter(\.isWord).map(\.surface).joined(separator: " ") }
+            spoken[3] = "And with old woes new wail my time's waste"
+            spoken[6] = "And weep afresh love's long cancelled woe"
+            spoken[9] = ""
+            spoken[10] = "The sad account of moan"
+            let earlier = Date().addingTimeInterval(-3 * 86_400)
+            let first = SpeechAttempt(lines: sonnet.tokenizedLines(), transcript: spoken.joined(separator: " "))
+            Propagation.apply(attempt: first, to: sonnet, engine: engine, source: .fullRecitation, mode: .speech, now: earlier)
+            spoken[9] = "And heavily from woe to woe tell over"
+            spoken[6] = "And weep afresh love's long since cancelled woe"
+            let second = SpeechAttempt(lines: sonnet.tokenizedLines(), transcript: spoken.joined(separator: " "))
+            Propagation.apply(attempt: second, to: sonnet, engine: engine, source: .fullRecitation, mode: .speech, now: Date().addingTimeInterval(-86_400))
+        }
         let upHill = Poem.make(title: "Up-Hill", author: "Christina Rossetti", rawText: upHill)
         context.insert(upHill)
         var acq = AcquisitionMachine.start()

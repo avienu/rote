@@ -10,6 +10,7 @@
 		0D29303D0A8190CFD0CB58CF /* TransitionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CB531037314730CEF087C8 /* TransitionCardView.swift */; };
 		13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */; };
 		1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */; };
+		31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */; };
 		375A1D7173EE18E80A0A6827 /* AcquisitionSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */; };
 		46B916B78946ED880D75ED6E /* PoemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */; };
 		613065B138676B5BB4D70AF9 /* ReviewSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472DCEA22D7F0D768302E377 /* ReviewSessionView.swift */; };
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		066DF9DBB29B0F2BCC92B74E /* RoteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoteApp.swift; sourceTree = "<group>"; };
+		122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapView.swift; sourceTree = "<group>"; };
 		22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcquisitionSessionView.swift; sourceTree = "<group>"; };
 		274BDC4E3EEB3BBF4B5DD24E /* Rote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Rote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoemDetailView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */,
 				AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */,
+				122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */,
 				8F4E1EE61476C802AF08F0D4 /* LibraryView.swift */,
 				2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */,
 				B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */,
@@ -192,6 +195,7 @@
 				375A1D7173EE18E80A0A6827 /* AcquisitionSessionView.swift in Sources */,
 				AB7FE3FF78FB536ABCA982AD /* DebugSnapshot.swift in Sources */,
 				1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */,
+				31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */,
 				A7A69DC96155E177BEA1D16A /* LibraryView.swift in Sources */,
 				13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */,
 				46B916B78946ED880D75ED6E /* PoemEditorView.swift in Sources */,
