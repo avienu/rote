@@ -17,18 +17,37 @@ struct LibraryView: View {
     var body: some View {
         List(selection: $selection) {
             ForEach(PoemStatus.allCases, id: \.self) { status in
-                let group = poems.filter { $0.status == status }
+                let group = status == .draft ? LearningQueue.ordered(poems.filter { $0.status == .draft }) : poems.filter { $0.status == status }
                 if !group.isEmpty {
-                    Section(sectionTitle(status)) {
+                    Section {
                         ForEach(group) { poem in
                             NavigationLink(value: poem) {
-                                PoemRow(poem: poem, now: now)
+                                PoemRow(poem: poem, now: now, upNext: status == .draft && poem === group.first)
                             }
                             .contextMenu {
+                                if status == .draft, poem !== group.first {
+                                    Button { LearningQueue.moveToFront(poem, in: group) } label: { Label("Learn next", systemImage: "arrow.up.to.line") }
+                                }
                                 Button("Delete", role: .destructive) { delete(poem) }
                             }
                         }
                         .onDelete { offsets in offsets.map { group[$0] }.forEach(delete) }
+                        .onMove { offsets, destination in
+                            if status == .draft { LearningQueue.move(group, fromOffsets: offsets, toOffset: destination) }
+                        }
+                        .moveDisabled(status != .draft)
+                    } header: {
+                        HStack {
+                            Text(sectionTitle(status))
+                            if status == .draft {
+                                Spacer()
+                                #if os(iOS)
+                                EditButton().font(.caption)
+                                #else
+                                Text("drag to reorder").font(.caption).foregroundStyle(.tertiary)
+                                #endif
+                            }
+                        }
                     }
                 }
             }
@@ -88,11 +107,20 @@ struct LibraryView: View {
 struct PoemRow: View {
     let poem: Poem
     let now: Date
+    var upNext = false
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(poem.title).font(.body)
+                HStack(spacing: 6) {
+                    Text(poem.title).font(.body)
+                    if upNext {
+                        Text("Up next")
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(Color.accentColor.opacity(0.18), in: Capsule())
+                    }
+                }
                 HStack(spacing: 6) {
                     if let author = poem.author, !author.isEmpty { Text(author) }
                     Text("^[\(poem.askedLines.count) line](inflect: true)")

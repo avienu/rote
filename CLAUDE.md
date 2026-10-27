@@ -22,6 +22,6 @@ Rote is a personal iPhone + Mac app for memorizing poetry verbatim. Read `SPEC.m
 - Keep `docs/asr-notes.md` updated with measured WER on archaic diction and any SpeechAnalyzer API gaps.
 
 ## Working with Shawn
-- When asking him to merge, give the PR's GitHub URL and the `gh` command.
+- Merge PRs yourself once `swift test` and the Mac and iOS builds pass, then report the URL. Never hand him commands or steps to run; do them.
 - For UI changes, include screenshots (iOS and Mac) in the PR.
 - Decisions for him: list each with context and a recommendation, and end with one pasteblock of lines he can return.
