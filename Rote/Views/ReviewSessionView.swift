@@ -5,6 +5,8 @@ import SwiftUI
 /// Steps through the due transition cards of the given poems.
 struct ReviewSessionView: View {
     let poems: [Poem]
+    /// When set, these items are reviewed in the given order instead of the due queue.
+    var drillItems: [TransitionItem]? = nil
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -80,6 +82,18 @@ struct ReviewSessionView: View {
         mode = InputMode(rawValue: defaultModeRaw) ?? .selfGrade
         var cards: [QueueCard] = []
         var map: [UUID: Entry] = [:]
+        if let drillItems {
+            for item in drillItems {
+                guard let poem = item.poem, let card = TransitionCard.make(poem: poem, targetOrder: item.targetLineOrder) else { continue }
+                cards.append(QueueCard(itemID: item.id, poemID: poem.id, lineOrder: item.targetLineOrder, contextOrders: card.contextOrders))
+                map[item.id] = Entry(poem: poem, item: item, card: card)
+            }
+            queue = cards            // weakest first, not shuffled
+            entries = map
+            runs = []
+            index = 0
+            return
+        }
         for poem in poems where poem.status == .reviewing {
             for item in poem.dueItems(now: now) {
                 guard let card = TransitionCard.make(poem: poem, targetOrder: item.targetLineOrder) else { continue }

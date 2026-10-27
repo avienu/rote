@@ -9,6 +9,8 @@ struct PoemDetailView: View {
     @State private var editing = false
     @State private var reviewing = false
     @State private var learning = false
+    @State private var drilling = false
+    @State private var selectedLine: Int?
     @AppStorage("desiredRetention") private var desiredRetention = FSRSScheduler.defaultRetention
 
     var body: some View {
@@ -17,7 +19,12 @@ struct PoemDetailView: View {
                 header
                 learnBox
                 reviewBox
-                PoemTextView(poem: poem)
+                if poem.status == .reviewing {
+                    statsBox
+                    HeatMapView(poem: poem, stats: lineStats, selectedLine: $selectedLine)
+                } else {
+                    PoemTextView(poem: poem)
+                }
             }
             .padding(24)
             .frame(maxWidth: 720, alignment: .leading)
@@ -44,6 +51,16 @@ struct PoemDetailView: View {
         .sheet(isPresented: $editing) { PoemEditorView(poem: poem) }
         .sheet(isPresented: $reviewing) { ReviewSessionView(poems: [poem]) }
         .sheet(isPresented: $learning) { AcquisitionSessionView(poem: poem) }
+        .sheet(isPresented: $drilling) {
+            ReviewSessionView(poems: [poem], drillItems: HeatMap.drillLines(lineStats).compactMap { poem.item(forLine: $0) })
+        }
+        .popover(item: Binding(get: { selectedLine.flatMap { o in lineStats.first { $0.lineOrder == o } } },
+                               set: { selectedLine = $0?.lineOrder })) { stat in
+            LineDetailView(poem: poem, stat: stat)
+                #if os(iOS)
+                .presentationDetents([.medium, .large])
+                #endif
+        }
         #if DEBUG
         .onAppear {
             if ProcessInfo.processInfo.environment["ROTE_AUTO_LEARN"] != nil, poem.status == .acquiring { learning = true }
@@ -87,6 +104,40 @@ struct PoemDetailView: View {
         poem.updatedAt = Date()
         try? context.save()
         learning = true
+    }
+
+    private var engine: ReviewEngine<FSRSScheduler> {
+        ReviewEngine(scheduler: FSRSScheduler(desiredRetention: poem.settings.desiredRetention ?? desiredRetention))
+    }
+
+    private var lineStats: [LineStats] {
+        HeatMap.lineStats(poem: poem, engine: engine, now: Date())
+    }
+
+    @ViewBuilder private var statsBox: some View {
+        let stats = lineStats
+        let weak = HeatMap.drillLines(stats)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 16) {
+                if let forecast = HeatMap.retentionForecast(stats) {
+                    Label(String(format: "%.0f%% retention forecast", forecast * 100), systemImage: "brain")
+                }
+                Button {
+                    drilling = true
+                } label: {
+                    Label(weak.isEmpty ? "No weak spots" : "Drill \(weak.count) weak \(weak.count == 1 ? "line" : "lines")", systemImage: "scope")
+                }
+                .disabled(weak.isEmpty)
+            }
+            .font(.callout)
+            let weakest = HeatMap.weakestLines(stats)
+            if !weakest.isEmpty {
+                Text("Weakest: " + weakest.map { String(format: "%d (%.0f%%)", $0.lineOrder + 1, $0.retrievability * 100) }.joined(separator: ", "))
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            Text("Words tinted by error rate. Gutter bar = stability; red when recall is under 70%. Tap a line for its history.")
+                .font(.caption2).foregroundStyle(.tertiary)
+        }
     }
 
     private func skipToReview() {
