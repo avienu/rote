@@ -17,8 +17,14 @@ struct ReviewSessionView: View {
         let card: TransitionCard
     }
 
+    private struct RunEntry {
+        let poem: Poem
+        let run: RunItem
+    }
+
     @State private var queue: [QueueCard] = []
     @State private var entries: [UUID: Entry] = [:]
+    @State private var runs: [RunEntry] = []
     @State private var index = 0
     @State private var mode: InputMode = .selfGrade
     @State private var reviewed = 0
@@ -31,6 +37,13 @@ struct ReviewSessionView: View {
                         apply(grade: grade, result: result, entry: entry)
                     }
                     .id(entry.item.id)
+                } else if index - queue.count < runs.count {
+                    let entry = runs[index - queue.count]
+                    RunView(poem: entry.poem, run: entry.run, mode: $mode) {
+                        reviewed += 1
+                        index += 1
+                    }
+                    .id(entry.run.id)
                 } else {
                     ContentUnavailableView {
                         Label(reviewed == 0 ? "Nothing due" : "All caught up", systemImage: "checkmark.circle")
@@ -50,8 +63,8 @@ struct ReviewSessionView: View {
                     Button("Stop") { dismiss() }.keyboardShortcut(.cancelAction)
                 }
                 ToolbarItem(placement: .principal) {
-                    if index < queue.count {
-                        Text("\(index + 1) of \(queue.count)").font(.callout.monospacedDigit()).foregroundStyle(.secondary)
+                    if index < queue.count + runs.count {
+                        Text("\(index + 1) of \(queue.count + runs.count)").font(.callout.monospacedDigit()).foregroundStyle(.secondary)
                     }
                 }
             }
@@ -76,6 +89,12 @@ struct ReviewSessionView: View {
         }
         queue = ReviewQueue.order(cards)
         entries = map
+        runs = poems.filter { $0.status == .reviewing }.flatMap { poem in
+            RunScheduling.dueRuns(poem: poem, now: now).map { RunEntry(poem: poem, run: $0) }
+        }
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["ROTE_AUTO_RUN"] != nil { queue = []; entries = [:] }
+        #endif
         index = 0
     }
 
@@ -85,6 +104,7 @@ struct ReviewSessionView: View {
         engine.apply(grade: grade, to: entry.item, now: Date(), source: .transitionCard, mode: result.mode,
                      wordErrors: result.wordErrors, wordCount: result.wordCount, elapsedMs: result.elapsedMs,
                      hintsUsed: result.hintsUsed, asrCorrections: result.asrCorrections)
+        RunScheduling.recompute(poem: entry.poem, now: Date())
         try? context.save()
         reviewed += 1
         index += 1

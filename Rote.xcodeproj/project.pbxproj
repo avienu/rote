@@ -21,6 +21,7 @@
 		AB7FE3FF78FB536ABCA982AD /* DebugSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E13EBEA85818B851D536EB /* DebugSnapshot.swift */; };
 		B46E5E72ADEE8CDC26E255EE /* RoteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066DF9DBB29B0F2BCC92B74E /* RoteApp.swift */; };
 		D5CD17CC53CA9B5D315D0EBD /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39A99CC4C25C7FEA953096D /* RootView.swift */; };
+		E9E566C895846A77197D1BB3 /* RunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E440EC035B7C06B2FB29D /* RunView.swift */; };
 		F31DE2FDB06A26CF085C2358 /* SpeechController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoemEditorView.swift; sourceTree = "<group>"; };
 		C26E04F6D53328E5E1DCD3F7 /* RoteCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RoteCore; path = RoteCore; sourceTree = SOURCE_ROOT; };
 		D4ACA82D323996C8977A029A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DB0E440EC035B7C06B2FB29D /* RunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunView.swift; sourceTree = "<group>"; };
 		EDF78A3986CC8658516C0A72 /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
 		F2D297CF6F266FB0A8CCDCFF /* RecitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecitationView.swift; sourceTree = "<group>"; };
 		F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				F2D297CF6F266FB0A8CCDCFF /* RecitationView.swift */,
 				472DCEA22D7F0D768302E377 /* ReviewSessionView.swift */,
 				B39A99CC4C25C7FEA953096D /* RootView.swift */,
+				DB0E440EC035B7C06B2FB29D /* RunView.swift */,
 				F378A176F94E3AA2AF8CC9A2 /* SpeechController.swift */,
 				35CB531037314730CEF087C8 /* TransitionCardView.swift */,
 			);
@@ -196,6 +199,7 @@
 				613065B138676B5BB4D70AF9 /* ReviewSessionView.swift in Sources */,
 				D5CD17CC53CA9B5D315D0EBD /* RootView.swift in Sources */,
 				B46E5E72ADEE8CDC26E255EE /* RoteApp.swift in Sources */,
+				E9E566C895846A77197D1BB3 /* RunView.swift in Sources */,
 				868F06C4092F37351EB8740B /* SampleData.swift in Sources */,
 				F31DE2FDB06A26CF085C2358 /* SpeechController.swift in Sources */,
 				0D29303D0A8190CFD0CB58CF /* TransitionCardView.swift in Sources */,

@@ -88,6 +88,9 @@ enum SampleData {
         context.insert(sonnet)
         context.insert(Poem.make(title: "The Tyger", author: "William Blake", rawText: tyger))
         Handoff.perform(poem: sonnet, engine: ReviewEngine(scheduler: FSRSScheduler()))
+        if ProcessInfo.processInfo.environment["ROTE_AUTO_RUN"] != nil {
+            sonnet.runItems?.forEach { $0.due = Date().addingTimeInterval(-60) }
+        }
         let upHill = Poem.make(title: "Up-Hill", author: "Christina Rossetti", rawText: upHill)
         context.insert(upHill)
         var acq = AcquisitionMachine.start()
