@@ -31,6 +31,9 @@ struct RootView: View {
             try? await Task.sleep(for: .seconds(1))
             if env["ROTE_AUTO_REVIEW"] != nil {
                 showingReview = true
+            } else if env["ROTE_AUTO_LEARN"] != nil {
+                let acquiring = PoemStatus.acquiring.rawValue
+                selection = try? context.fetch(FetchDescriptor<Poem>(predicate: #Predicate { $0.statusRaw == acquiring })).first
             } else {
                 selection = try? context.fetch(FetchDescriptor<Poem>(sortBy: [SortDescriptor(\.title)])).first
             }
