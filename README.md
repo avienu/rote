@@ -36,6 +36,7 @@ account and creates the CloudKit container `iCloud.com.avienu.rote`.
 | `ROTE_SEED_HISTORY=1` | plus two imperfect run-throughs for the heat map |
 | `ROTE_FAKE_TRANSCRIPT=auto` | canned speech engine (one wrong word, one "um") |
 | `ROTE_AUTO_REVIEW`, `ROTE_AUTO_LEARN`, `ROTE_AUTO_RUN`, `ROTE_AUTO_SPEAK`, `ROTE_AUTO_APPLY`, `ROTE_AUTO_SETTINGS` | open screens for screenshots |
+| `ROTE_AUTO_LIBRARY` | start on the poem list with nothing selected |
 | `ROTE_SNAPSHOT=file.png` | Mac: write the key window to a PNG and quit |
 
 ## Keyboard (Mac)
