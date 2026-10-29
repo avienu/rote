@@ -39,6 +39,8 @@ struct RootView: View {
         }
         // Files opened from Finder, the share sheet or `open -a Rote <file>`:
         // a JSON archive is imported; a text file opens the editor pre-filled.
+        // They go to the open window instead of spawning a new one.
+        .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
         .onOpenURL { url in
             guard url.isFileURL else { return }
             if url.pathExtension.lowercased() == "json" {
@@ -82,7 +84,7 @@ struct RootView: View {
             } else if env["ROTE_AUTO_LEARN"] != nil {
                 let acquiring = PoemStatus.acquiring.rawValue
                 selection = try? context.fetch(FetchDescriptor<Poem>(predicate: #Predicate { $0.statusRaw == acquiring })).first
-            } else {
+            } else if env["ROTE_AUTO_LIBRARY"] == nil {   // ROTE_AUTO_LIBRARY stays on the list
                 selection = try? context.fetch(FetchDescriptor<Poem>(sortBy: [SortDescriptor(\.title)])).first
             }
             #if os(macOS)

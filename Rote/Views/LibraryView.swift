@@ -39,6 +39,7 @@ struct LibraryView: View {
                     } header: {
                         HStack {
                             Text(sectionTitle(status))
+                            Text("\(group.count)").monospacedDigit().foregroundStyle(.tertiary)
                             if status == .draft {
                                 Spacer()
                                 #if os(iOS)
@@ -53,6 +54,15 @@ struct LibraryView: View {
             }
         }
         .navigationTitle("Rote")
+        .safeAreaInset(edge: .bottom) {
+            if !poems.isEmpty {
+                Text(summary)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+            }
+        }
         .overlay {
             if poems.isEmpty {
                 ContentUnavailableView("No poems yet", systemImage: "text.quote",
@@ -87,6 +97,11 @@ struct LibraryView: View {
 
     private var dueTotal: Int {
         poems.filter { $0.status == .reviewing }.reduce(0) { $0 + $1.dueItems(now: now).count + RunScheduling.dueRuns(poem: $1, now: now).count }
+    }
+
+    private var summary: String {
+        let count = poems.count == 1 ? "1 poem" : "\(poems.count) poems"
+        return dueTotal > 0 ? "\(count) · \(dueTotal) due" : count
     }
 
     private func sectionTitle(_ status: PoemStatus) -> String {
