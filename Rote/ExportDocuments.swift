@@ -31,4 +31,5 @@ final class AppCommands {
     var exportAllRequested = false
     var reviewRequested = false
     var settingsRequested = false
+    var guideRequested = false
 }

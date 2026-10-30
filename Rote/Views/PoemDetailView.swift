@@ -75,8 +75,12 @@ struct PoemDetailView: View {
     @ViewBuilder private var learnBox: some View {
         let now = Date()
         if poem.status == .draft {
+            VStack(alignment: .leading, spacing: 8) {
             Button { startLearning() } label: { Label("Start learning", systemImage: "graduationcap") }
                 .buttonStyle(.borderedProminent)
+                Text("About ten minutes a sitting. Rote shows a few lines with fading cues, you recite them from memory, and it saves your place.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
         } else if poem.status == .acquiring, let acq = poem.acquisition {
             HStack(spacing: 16) {
                 let gated = AcquisitionMachine.isGated(acq, settings: poem.settings, now: now)

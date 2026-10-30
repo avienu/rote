@@ -11,6 +11,7 @@
 		13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */; };
 		151164F93D9BE5E76ECAA6DA /* ExportDocuments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4BD5AF501B727AA039013A /* ExportDocuments.swift */; };
 		1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */; };
+		195190D098A6D98B6017338D /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0170AB8AE7CFDBAE57E41CA /* GuideView.swift */; };
 		31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */; };
 		375A1D7173EE18E80A0A6827 /* AcquisitionSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */; };
 		46B916B78946ED880D75ED6E /* PoemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */; };
@@ -44,6 +45,7 @@
 		B39A99CC4C25C7FEA953096D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B68D2EEE174FF04C24EB3E45 /* PoemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoemEditorView.swift; sourceTree = "<group>"; };
 		BC4BD5AF501B727AA039013A /* ExportDocuments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDocuments.swift; sourceTree = "<group>"; };
+		C0170AB8AE7CFDBAE57E41CA /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
 		C26E04F6D53328E5E1DCD3F7 /* RoteCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RoteCore; path = RoteCore; sourceTree = SOURCE_ROOT; };
 		D4ACA82D323996C8977A029A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB0E440EC035B7C06B2FB29D /* RunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunView.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 			children = (
 				22A0AE6597EA17F589727A03 /* AcquisitionSessionView.swift */,
 				AB9C8D117C4D73DA465B7A7C /* DiffLineView.swift */,
+				C0170AB8AE7CFDBAE57E41CA /* GuideView.swift */,
 				122B9EDC0A9D58040EA6AD5A /* HeatMapView.swift */,
 				8F4E1EE61476C802AF08F0D4 /* LibraryView.swift */,
 				2FF25B86FB7878D856F8C25A /* PoemDetailView.swift */,
@@ -206,6 +209,7 @@
 				AB7FE3FF78FB536ABCA982AD /* DebugSnapshot.swift in Sources */,
 				1852F93EB08EB3F7572DEB86 /* DiffLineView.swift in Sources */,
 				151164F93D9BE5E76ECAA6DA /* ExportDocuments.swift in Sources */,
+				195190D098A6D98B6017338D /* GuideView.swift in Sources */,
 				31E1C86C05540ECF795A9BFB /* HeatMapView.swift in Sources */,
 				A7A69DC96155E177BEA1D16A /* LibraryView.swift in Sources */,
 				13F45C0BC961788626CF2B67 /* PoemDetailView.swift in Sources */,

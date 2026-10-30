@@ -55,6 +55,7 @@ struct AcquisitionSessionView: View {
         .onAppear {
             mode = InputMode(rawValue: defaultModeRaw) ?? .selfGrade
             AcquisitionMachine.openGateIfDue(&state, settings: poem.settings, now: Date())
+            showFirstWindowHintIfNeeded()
             persist()
         }
         .task {
@@ -118,6 +119,7 @@ struct AcquisitionSessionView: View {
                 Spacer()
                 Button("I've read it") {
                     AcquisitionMachine.finishReading(&state)
+                    showFirstWindowHintIfNeeded()
                     persist()
                 }
                 .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction)
@@ -190,6 +192,12 @@ struct AcquisitionSessionView: View {
             attemptCounter += 1
         }
         .id("drill-\(order)-\(attemptCounter)")
+    }
+
+    /// One-time hint on the very first window of a poem; the banner is tap-to-dismiss.
+    private func showFirstWindowHintIfNeeded() {
+        guard state.phase == .windowing, state.windowSize == 1, state.cursor == 0, state.completedPasses == 0, banner == nil else { return }
+        banner = "Look away and say the shown lines from memory, then check. Cues fade as you get them right. Tap to dismiss."
     }
 
     // MARK: Actions

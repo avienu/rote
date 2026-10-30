@@ -55,6 +55,9 @@ struct RoteApp: App {
                 Button("Import Poems…") { commands.importRequested = true }.keyboardShortcut("i", modifiers: .command)
                 Button("Export All Poems…") { commands.exportAllRequested = true }.keyboardShortcut("e", modifiers: [.command, .shift])
             }
+            CommandGroup(replacing: .help) {
+                Button("How Rote Works") { commands.guideRequested = true }
+            }
             CommandMenu("Review") {
                 Button("Review Due Cards") { commands.reviewRequested = true }.keyboardShortcut("r", modifiers: .command)
                 Divider()

@@ -13,6 +13,8 @@ struct RootView: View {
     @State private var exportDocument: DataDocument?
     @State private var notice: String?
     @State private var openedFile: PoemFile?
+    @State private var showingGuide = false
+    @AppStorage("hasSeenGuide") private var hasSeenGuide = false
     @Environment(\.modelContext) private var context
     private var commands: AppCommands { AppCommands.shared }
 
@@ -24,8 +26,13 @@ struct RootView: View {
             if let poem = selection {
                 PoemDetailView(poem: poem)
             } else {
-                ContentUnavailableView("No poem selected", systemImage: "text.book.closed",
-                                       description: Text("Pick a poem or add one."))
+                ContentUnavailableView {
+                    Label("No poem selected", systemImage: "text.book.closed")
+                } description: {
+                    Text("Pick a poem or add one.")
+                } actions: {
+                    Button("How Rote works") { showingGuide = true }
+                }
             }
         }
         .sheet(isPresented: $showingNewPoem) {
@@ -34,6 +41,12 @@ struct RootView: View {
         .sheet(isPresented: $showingSettings) {
             NavigationStack { SettingsView() }
         }
+        .sheet(isPresented: $showingGuide) { GuideView() }
+        .onAppear {
+            // First launch: explain the flow once. Available later from Help / More / Settings.
+            if !hasSeenGuide { showingGuide = true }
+        }
+        .onChange(of: commands.guideRequested) { _, v in if v { showingGuide = true; commands.guideRequested = false } }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { notice = PoemImport.run(url: url, context: context) }
         }
@@ -77,7 +90,9 @@ struct RootView: View {
             // ROTE_SNAPSHOT (Mac) writes the key window to a PNG and quits.
             let env = ProcessInfo.processInfo.environment
             try? await Task.sleep(for: .seconds(1))
-            if env["ROTE_AUTO_REVIEW"] != nil {
+            if env["ROTE_AUTO_GUIDE"] != nil {
+                showingGuide = true
+            } else if env["ROTE_AUTO_REVIEW"] != nil {
                 showingReview = true
             } else if env["ROTE_AUTO_SETTINGS"] != nil {
                 showingSettings = true      // the same view the Mac Settings scene shows
