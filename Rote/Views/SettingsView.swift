@@ -44,6 +44,14 @@ struct SettingsView: View {
                 }
             }
             #endif
+            Section("Help") {
+                Button("How Rote works…") {
+                    AppCommands.shared.guideRequested = true
+                    #if os(iOS)
+                    dismiss()
+                    #endif
+                }
+            }
             Section("Backup") {
                 Button("Export all poems…") { exportAll() }
                     .disabled(poems.isEmpty)

@@ -79,6 +79,8 @@ struct LibraryView: View {
                 Menu {
                     Button { showingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
                     Button { importing = true } label: { Label("Import poems…", systemImage: "square.and.arrow.down") }
+                    Divider()
+                    Button { AppCommands.shared.guideRequested = true } label: { Label("How Rote works", systemImage: "questionmark.circle") }
                 } label: { Label("More", systemImage: "ellipsis.circle") }
             }
             #endif
