@@ -16,7 +16,7 @@ struct LibraryView: View {
 
     var body: some View {
         List(selection: $selection) {
-            ForEach(PoemStatus.allCases, id: \.self) { status in
+            ForEach(Self.librarySections, id: \.self) { status in
                 let group = status == .draft ? LearningQueue.ordered(poems.filter { $0.status == .draft }) : poems.filter { $0.status == status }
                 if !group.isEmpty {
                     Section {
@@ -96,6 +96,9 @@ struct LibraryView: View {
             ReviewSessionView(poems: poems.filter { $0.status == .reviewing })
         }
     }
+
+    /// Learning first so the current poem is at the top of the list.
+    private static let librarySections: [PoemStatus] = [.acquiring, .draft, .reviewing, .retired]
 
     private var dueTotal: Int {
         poems.filter { $0.status == .reviewing }.reduce(0) { $0 + $1.dueItems(now: now).count + RunScheduling.dueRuns(poem: $1, now: now).count }
